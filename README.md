@@ -7,76 +7,47 @@ Ausgabe: **ARPA**
 ## Ausführen von `language_model.py`
 
 1. Python-Konsole starten
+
 ```bash
 python
 ```
+
 2. Import
+
 ```python
 from language_model import *
 from arpa import *
 ```
+
 3. Ausführen
+
 ```python
 lines = load_text_from_file("input.txt")
 language_model = generate_mle_language_model(lines, 2)
 write_arpa_file(language_model, "output.lm")
 ```
 
-## Ausführen von `perplexity.py`
-
-1. Import der Funktionen aus Language_Model.py und Arpa.py
-
-2. Einlesen der Parameter mittels Funktionen von Language_Model.py und Arpa.py
-
-
-Parameter:
-
-    1. `test_data` : Testdateien für Sprachmodell
-    2. `arpa_file` : ARPA Datei des Sprachmodells
-
-3. Ausführen von calculate_perplexity
-
-mit folgenden Parametern
-
-    1. language_model (von language_model.py)
-    2. Test Dateien (lines)
-
-4. Ausführen von perplexity.py
-
-5. Ausgabe der Perplexität auf der Konsole
-
 ### Verfügbare Funktionen
 
 #### `load_text_from_file`
+
 Parameter:
+
 1. `file`: Dateipfad
-2. `number_of_sentence_pseudo_words`: Anzahl der Satzanfang `<s>` und Satzende `</s>` Pseudowörter an den jeweiligen 
-    Satzanfängen und Enden. **`default = 1`**
+2. `number_of_sentence_pseudo_words`: Anzahl der Satzanfang `<s>` und Satzende `</s>` Pseudowörter an den jeweiligen
+   Satzanfängen und Enden. **`default = 1`**
 
 #### Sprachmodellfunktionen
+
 Parameter:
+
 1. `lines`: Satzzeilen
 2. `n`: Ordnung des Sprachmodells
 
 * `generate_mle_language_model`
 * `generate_add_k_language_model`: Extra Parameter `k` vorhanden.
-* `generate_witten_bell_language_model`  
+* `generate_witten_bell_language_model`
 * `generate_kneser_ney_language_model`
-
-#### Perplexity Funktionen
-
-Parameter:
-1. `test_data` : Testdateien für Sprachmodell
-2. `arpa_file` : ARPA Datei des Sprachmodells
-
-#### Perplexity Funktionen
-Parameter: 
-lines : Testdateien
-language_model : Sprachmodell generiert aus language_model.py
-n Ordnung (wird von calculate_perplexity aufgerufen)
-
-calculate_perplexity
-calculate_ngram_perplexity
 
 ## Umsetzung
 
@@ -211,47 +182,6 @@ $$
 \lambda(\epsilon) = \frac{d}{\sum_v C(\epsilon v)} \left| \{w' : C(\epsilon w') > 0\} \right| =
 \frac{d}{\sum_v C(v)} \left| \{w' : C(w') > 0\} \right|
 $$
-
-### Perplexität
-
-Die Perplexität wird für jede Ordnung des Modells seperat berechnet. 
-[JURAFSKY 2008 eqn, 3.18 p, 9]
-
-Um die gesamte Perplexität für das Sprachmodell anzugeben, muss der gewichtete Mittelwert für alle Perplexitäten der verschiedenen Ordnungen des Sprachmodells ausgerechnet werden. [JURAFSKY 2008 p,8]
-
-In diesem Fall werden die Gewichte gleichmäßig verteilt. Dies erledigt numpy.full.
-
-Der gewichtet Mittelwert wurde mittels numpy.weighed_average berechnet.
-
-Weighed Average [JURAFSKY 2008 eqn, 3.27, p, 17]
-
-Perplexitätstestdaten
-Die Perplexität wird für jede Ordnung des Modells seperat berechnet. 
-[JURAFSKY 2008 eqn, 3.18 p, 9]
-
-$$
-perplexity(W) = P(w_1w_2...w_n)^{-\frac{1}{N}}
-$$
-
-Um die gesamte Perplexität für das Sprachmodell anzugeben, muss der gewichtete Mittelwert für alle Perplexitäten der verschiedenen Ordnungen des Sprachmodells ausgerechnet werden.
-[JURAFSKY 2008 p,8]
-
-In diesem Fall werden die Gewichte gleichmäßig verteilt. Dies erledigt numpy.full.
-
-Der gewichtet Mittelwert wurde mittels numpy.weighed_average berechnet.
-
-
-
-![Weighed Average](../literatur/image.png)
-[JURAFSKY 2008 eqn, 3.27, p, 17]
-
-#### Perplexitätstestdaten
-
-sample_text/eval.txt
-
-Diese Daten wurden zur Perplexitätsberechnung verwendet.
-Sie wurden selbst angelegt
-
 
 ## Online-Referenzen
 
