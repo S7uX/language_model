@@ -218,7 +218,7 @@ def generate_witten_bell_language_model(lines, n):
                 possible_extensions_count = possible_extensions_counts[history]
 
                 # Witten-Bell interpolation weights wb_lambda ≔ λ(w₁…wₙ₋₁) [CHEN 1998, eqn. 16 on p. 13]:
-                # ［1 - λ(w₁…wₙ₋₁)］= N₁₊(w₁…wₙ₋₁•) ⧸［N₁₊(w₁…wₙ₋₁•) + C(w₁…wₙ₋₁)］
+                # ［1 - λ(w₁…wₙ₋₁)］= N₁₊(w₁…wₙ₋₁•) / ［N₁₊(w₁…wₙ₋₁•) + C(w₁…wₙ₋₁)］
                 wb_lambda = -1 * ((possible_extensions_count / (possible_extensions_count + history_count)) - 1)
 
                 backoff_probability = backoff[n - 1][history]
@@ -332,15 +332,15 @@ def generate_kneser_ney_language_model(lines, n):
 
                 unique_word_count = len(unique_words)
 
-                # kn_lambda_epsilon ≔ λ(ϵ) =［d / Σᵥ(C(v))］⋅ |w':C(w') > 0|
+                # kn_lambda_epsilon ≔ λ(ε) =［d / Σᵥ(C(v))］⋅ |w':C(w') > 0|
                 kn_lambda_epsilon = (discount / len(words)) * unique_word_count
 
                 # [JURAFSKY 2008, eqn. 3.42 p. 21]
-                # probability ≔ Pₖₙ(w) =［max(cₖₙ(w) - d, 0) ⧸ Σᵥ(cₖₙ(v))］+ λ(ε) · 1/V
+                # probability ≔ Pₖₙ(w) =［max(cₖₙ(w) - d, 0) / Σᵥ(cₖₙ(v))］+ λ(ε) · 1/V
                 probability = (max([kneser_ney_count(ngram) - discount, 0]) / len(words) +
                                kn_lambda_epsilon / unique_word_count)
 
-                # unk_probability ≔ λ(ϵ) ⧸ V
+                # unk_probability ≔ λ(ε) /  V
                 unk_probability = kn_lambda_epsilon / unique_word_count
                 probabilities[('<unk>',)] = {"value": unk_probability}
 
@@ -360,7 +360,7 @@ def generate_kneser_ney_language_model(lines, n):
 
                 # [JURAFSKY 2008, eqn. 3.40 p. 21]
                 # probability ≔
-                #   Pₖₙ(wₙ|w₁…wₙ₋₁) =［max(cₖₙ(w₁…wₙ) - d, 0) ⧸ Σᵥ(cₖₙ(w₁…wₙ₋₁v))］+ λ(w₁…wₙ₋₁) · Pₖₙ(wₙ|w₂…wₙ₋₁)
+                #   Pₖₙ(wₙ|w₁…wₙ₋₁) =［max(cₖₙ(w₁…wₙ) - d, 0) / Σᵥ(cₖₙ(w₁…wₙ₋₁v))］+ λ(w₁…wₙ₋₁) · Pₖₙ(wₙ|w₂…wₙ₋₁)
                 probability = (max([kneser_ney_count(ngram) - discount, 0]) /
                                sum(kneser_ney_count(ngram[:-1] + v) for v in unique_words) +
                                kn_lambda * backoff_probability["value"])

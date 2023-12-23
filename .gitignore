@@ -1,2 +1,11 @@
 .idea
+_minted-language_model
+
+*.aux
+*.fls
+*.log
+*.out
+*.xmpdata
+*.xmpi
+*.fdb_latexmk
 
