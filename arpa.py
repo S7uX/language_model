@@ -1,7 +1,6 @@
 import math
 
 from ngram import ngram_to_string
-# ==================================================== write ========================================================= #
 
 
 def write_arpa_file(language_model, filename="out.lm"):
@@ -44,53 +43,3 @@ def arpa_ngram_definition(probabilities):
             line += f" {backoff_weight}"
 
         yield f"{line}\n"
-
-
-# ==================================================== read ========================================================= #
-
-def arpa_read_file(filename):
-
-    language_model = []
-    with open(filename, 'r', encoding='utf-8') as f:
-        header = True
-        ngram_probabilities = None
-
-        for line in f:
-            line = line.strip()
-            if len(line)==0: #Skip empty lines
-                continue
-            if header:
-                if line=="\\data\\":
-                    header=False
-                continue
-            if line=="\\end\\":
-                break
-
-            if line.startswith("ngram"):
-                ngram_count=int(line.split("=")[1])
-                ngram_probabilities={'unique_ngram_count':ngram_count,'dict':{}}
-                language_model.append(ngram_probabilities)
-                continue
-
-            if line.startswith("\\"):
-                continue
-
-            parts = line.split()
-            probability = float(parts[0])
-            if parts[-1].isdigit():
-                ngram_tuple = tuple(parts[1:-1])
-                backoff_weight = float(parts[-1]) if len(parts) > 2 else None
-                ngram_probabilities = {
-                    ngram_tuple: {'value': math.pow(10, probability), 'backoff_weight': math.pow(10, backoff_weight)}}
-            else:
-                ngram_tuple = tuple(parts[1:])
-                ngram_probabilities = {ngram_tuple: {'value': math.pow(10, probability)}}
-            language_model[len(ngram_tuple) - 1]["dict"].update(ngram_probabilities)
-
-        return language_model
-
-
-
-
-
-
